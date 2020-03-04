@@ -11,7 +11,7 @@
 
     onMount(() => {
         currentRow = initialRow;
-        currentCol = initialCol;        
+        currentCol = initialCol;
     });
 
     export function canMoveTo(row, col) {
@@ -40,12 +40,16 @@
 <svelte:options accessors={true}/>
 
 <li class:blank={isBlank}
-    on:click 
+    on:click
     bind:this={liElement}
-></li>
+>
+    <div class="image"></div>
+</li>
 
 <style>
 li{
+  width: calc(var(--content-size) / var(--grid-size));
+  height: calc(var(--content-size) / var(--grid-size));
   list-style: none;
   cursor: pointer;
   list-style: none;
@@ -55,6 +59,17 @@ li{
 
   grid-row: calc(var(--current-row) + 1);
   grid-column: calc(var(--current-col) + 1);
+  display: flex;
+  flex-direction: column;
+}
+
+li.blank {
+  visibility: hidden;
+  cursor: default;
+}
+
+.image {
+  flex:1;
   background-image: var(--image);
   background-repeat: no-repeat;
   background-size: var(--content-size);
@@ -62,8 +77,7 @@ li{
   background-position-x: calc(var(--initial-col) * var(--content-size) / var(--grid-size) * -1);
 }
 
-li.blank {
-  visibility: hidden;
-  cursor: default;
+image.blank {
+  background: none;
 }
 </style>
