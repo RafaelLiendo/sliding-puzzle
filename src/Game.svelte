@@ -7,6 +7,7 @@
 
   let ulElement;
   let tiles = [];
+  let tilesSetup = [];
   let blankTile;
 
   onMount(() => {
@@ -17,11 +18,14 @@
 
   function createTiles() {
     tiles = [];
+    tilesSetup = [];
     for (let row = 0; row < size; row++) {
       for (let col = 0; col < size; col++) {
-        tiles.push({row, col, ref: null});
+        tilesSetup.push({row, col});
       }
     }
+
+
   }
 
   function onTileClick(tile) {
@@ -34,21 +38,21 @@
   }
 
   function checkWinCondition() {
-    if(tiles.every(tile => tile.ref.isInRightPlace())) {
+    if(tiles.every(tile => tile.isInRightPlace())) {
       console.log('you win!');
     }
   }
 
-  $: blankTile = tiles && tiles.length && tiles[tiles.length - 1].ref;
+  $: blankTile = tiles && tiles.length && tiles[tiles.length - 1];
 </script>
 
 <ul bind:this={ulElement}>
-  {#each tiles as tile, i}
-    <Tile bind:this={tiles[i].ref} 
-      initialRow={tile.row} 
+  {#each tilesSetup as tile, i}
+    <Tile bind:this={tiles[i]}
+      initialRow={tile.row}
       initialCol={tile.col}
-      isBlank={blankTile && tile.ref === blankTile}
-      on:click={onTileClick(tile.ref)} />
+      isBlank={blankTile && tiles[i] === blankTile}
+      on:click={onTileClick(tiles[i])} />
   {/each}
 </ul>
 
@@ -62,5 +66,5 @@
     grid-gap: .5em;
     margin-bottom: 4em;
   }
-  
+
 </style>
