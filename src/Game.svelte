@@ -85,6 +85,13 @@
     display: grid;
     grid-gap: var(--grid-gap, 0);
     margin-bottom: 4em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition-property: all;
+    transition-duration: 600ms;
+    transition-timing-function: ease-in-out;
   }
 
 </style>
