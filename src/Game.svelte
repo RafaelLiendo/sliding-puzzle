@@ -1,8 +1,6 @@
 <script>
   import Tile from './Tile.svelte';
   import { onMount } from 'svelte';
-  import animateCssGrid from 'animate-css-grid'
-  import { tick } from 'svelte';
 
   export let size;
   export let image;
@@ -11,26 +9,15 @@
   let tiles = [];
   let tilesSetup = [];
   let blankTile;
-  let animatedCssGrid;
+  let expanded = false;;
 
-  onMount(() => {
-    ulElement.style.setProperty('--image', image);
-    ulElement.style.setProperty('--grid-size', size);
-    createTiles();
-    animatedCssGrid = animateCssGrid.wrapGrid(ulElement,{
-      duration: 500,
-    });
-  });
+  $: ulElement && ulElement.style.setProperty('--image', image);
+  $: ulElement && ulElement.style.setProperty('--grid-size', size);
+  $: createTiles(size);
+  $: blankTile = tiles && tiles.length && tiles[tiles.length - 1];
+  $: document.documentElement.style.setProperty('--grid-gap', expanded ? '1em' : '0');
 
-  let expanded = false;
-  async function onExpandClick() {
-    expanded = !expanded;
-    document.documentElement.style.setProperty('--grid-gap', expanded ? '1em' : '0');
-    await tick();
-    animatedCssGrid.forceGridAnimation();
-  }
-
-  function createTiles() {
+  function createTiles(size) {
     tiles = [];
     tilesSetup = [];
     for (let row = 0; row < size; row++) {
@@ -40,14 +27,12 @@
     }
   }
 
-  async function onTileClick(tile) {
+  function onTileClick(tile) {
     if(tile.canMoveTo(blankTile.currentRow, blankTile.currentCol)) {
       const {currentRow: prevRow, currentCol: prevCol} = tile;
       tile.moveTo(blankTile.currentRow, blankTile.currentCol);
       blankTile.moveTo(prevRow, prevCol);
       checkWinCondition();
-      await tick();
-      animatedCssGrid.forceGridAnimation();
     }
   }
 
@@ -56,8 +41,6 @@
       console.log('you win!');
     }
   }
-
-  $: blankTile = tiles && tiles.length && tiles[tiles.length - 1];
 </script>
 
 <ul bind:this={ulElement}>
@@ -70,28 +53,26 @@
   {/each}
 </ul>
 
-<button on:click={onExpandClick}>Expand</button>
+<button class="expand" on:click={() => expanded = !expanded }>Toggle Expand</button>
 
 <style>
-  button {
+  button.expand {
       position: fixed;
       right: 0;
       bottom: 0;
   }
 
-  ul{
-    padding: 0;
+  ul {
+    list-style-type: none;
     margin: 0;
+    padding: 0;
     display: grid;
     grid-gap: var(--grid-gap, 0);
-    margin-bottom: 4em;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition-property: all;
-    transition-duration: 600ms;
-    transition-timing-function: ease-in-out;
+    transition: all 600ms ease-in-out;
   }
 
 </style>

@@ -9,10 +9,12 @@
 
     let liElement;
 
-    onMount(() => {
-        currentRow = initialRow;
-        currentCol = initialCol;
-    });
+    $: currentRow = initialRow;
+    $: currentCol = initialCol;
+    $: liElement && liElement.style.setProperty('--current-row', currentRow);
+    $: liElement && liElement.style.setProperty('--current-col', currentCol);
+    $: liElement && liElement.style.setProperty('--initial-row', initialRow);
+    $: liElement && liElement.style.setProperty('--initial-col', initialCol);
 
     export function canMoveTo(row, col) {
         const deltaX = Math.abs(currentCol - col);
@@ -30,46 +32,25 @@
         return currentRow === initialRow
             && currentCol === initialCol;
     }
-
-    $: liElement && liElement.style.setProperty('--current-row', currentRow);
-    $: liElement && liElement.style.setProperty('--current-col', currentCol);
-    $: liElement && liElement.style.setProperty('--initial-row', initialRow);
-    $: liElement && liElement.style.setProperty('--initial-col', initialCol);
 </script>
 
 <svelte:options accessors={true}/>
 
 <li class:blank={isBlank}
     on:click
-    bind:this={liElement}
->
-    <div class="image"></div>
+    bind:this={liElement}>
 </li>
 
 <style>
-li{
+li {
   width: calc(var(--content-size) / var(--grid-size));
   height: calc(var(--content-size) / var(--grid-size));
-  list-style: none;
   cursor: pointer;
-  list-style: none;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
               0 8px 10px 1px rgba(0, 0, 0, 0.14),
               0 3px 14px 2px rgba(0, 0, 0, 0.12);
-
   grid-row: calc(var(--current-row) + 1);
   grid-column: calc(var(--current-col) + 1);
-  display: flex;
-  flex-direction: column;
-}
-
-li.blank {
-  visibility: hidden;
-  cursor: default;
-}
-
-.image {
-  flex:1;
   background-image: var(--image);
   background-repeat: no-repeat;
   background-size: var(--content-size);
@@ -77,7 +58,9 @@ li.blank {
   background-position-x: calc(var(--initial-col) * var(--content-size) / var(--grid-size) * -1);
 }
 
-image.blank {
+li.blank {
+  visibility: hidden;
+  cursor: default;
   background: none;
 }
 </style>
